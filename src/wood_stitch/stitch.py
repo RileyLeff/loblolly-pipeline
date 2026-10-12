@@ -45,7 +45,7 @@ def stitch(tile_dir, out_path="mosaic.ome.tif", *, paths=None, max_input_gb=2.0,
     if not np.isclose(*scales[0], rtol=1e-6, atol=0):
         raise ValueError("Stitching anisotropic pixels needs a calibrated resampling step")
     if any(i["dtype"] not in ("uint8", "uint16") or len(i["shape"]) != 3 for i in infos):
-        raise ValueError("Stitching currently requires single-plane uint8 RGB TIFFs")
+        raise ValueError("Stitching requires single-plane uint8 or 12-bit uint16 RGB TIFFs")
     decoded_bytes = sum(int(np.prod(i["shape"])) for i in infos)
     if decoded_bytes > max_input_gb * 1e9:
         raise MemoryError(
