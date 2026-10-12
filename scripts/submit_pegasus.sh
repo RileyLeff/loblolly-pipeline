@@ -41,7 +41,7 @@ mkdir -p "$LOBLOLLY_CACHE_DIR" || true
 
 # Run pipeline and keep its exit code
 echo "Starting pipeline..."
-uv run scripts/run_pipeline.py --config config.toml
+uv run scripts/run_pipeline.py --config "${LOBLOLLY_CONFIG:-config.toml}"
 status=$?
 
 echo "Job finished: $(date)"
