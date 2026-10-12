@@ -21,7 +21,7 @@ module load python/3.13
 module load cuda/11.8
 
 # Go to repo
-cd $SLURM_SUBMIT_DIR
+cd "$SLURM_SUBMIT_DIR"
 
 # Install uv if not available
 if ! command -v uv &> /dev/null; then
@@ -35,11 +35,14 @@ uv sync
 # Create logs directory
 mkdir -p logs
 
-# Run pipeline
+# Cache directory: override with LOBLOLLY_CACHE_DIR, else use this default
+export LOBLOLLY_CACHE_DIR="${LOBLOLLY_CACHE_DIR:-/scratch/shossain/loblolly-cache}"
+mkdir -p "$LOBLOLLY_CACHE_DIR" || true
+
+# Run pipeline and keep its exit code
 echo "Starting pipeline..."
 uv run scripts/run_pipeline.py --config config.toml
+status=$?
 
 echo "Job finished: $(date)"
-# Set cache directory - update this to your Pegasus scratch path 
-export LOBLOLLY_CACHE_DIR=/scratch/shossain/loblolly-cache
-mkdir -p $LOBLOLLY_CACHE_DIR
+exit "$status"

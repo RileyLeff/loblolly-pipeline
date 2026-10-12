@@ -72,7 +72,10 @@ def build_unmixing_matrix(stain_vectors: np.ndarray) -> np.ndarray:
     s2 = stain_vectors[1]
     # Residual = cross product of the two stain vectors
     residual = np.cross(s1, s2)
-    residual = residual / np.linalg.norm(residual)
+    norm = np.linalg.norm(residual)
+    if not np.isfinite(norm) or norm < 1e-8:
+        raise ValueError("Stain vectors are degenerate (parallel or zero); cannot build unmixing matrix")
+    residual = residual / norm
     stain_matrix = np.array([s1, s2, residual])
     return np.linalg.inv(stain_matrix.T)
 
